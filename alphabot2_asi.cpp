@@ -16,6 +16,9 @@
 #define BIN1   A2       // motor-R forward (IN3)
 #define BIN2   A3       // motor-R backward (IN4)
 #define PCFADR  0x20    // PCF8574 I/O expansion module address (for forward facing infrared sensors)
+#define LED_PIN 7       // OLEDs pin
+
+Adafruit_NeoPixel RGB = Adafruit_NeoPixel(4, LED_PIN, NEO_GRB + NEO_KHZ800);    // setup RGB OLEDs
 
 TRSensors line_sensors = TRSensors();       // declare line sensors as TRSensor type object
 unsigned int line_sensor_values[5];         // declare global array for line sensor values
@@ -61,7 +64,7 @@ byte read_PCF8574(){    // read from the PCF8574 I/O expansion module
 }
 
 
-char read_infrared(bool verbose=false){     // read from the front-facing infrared sensors
+char read_infrared(bool verbose=false){
     byte value;                             // declare sensor value as byte type variable
     write_PCF8574(0xC0 | read_PCF8574());   // write sensor output to PCF8574 I/O expansion module
     value = read_PCF8574() | 0x3F;          // read PCF module (sensor output)
@@ -115,7 +118,7 @@ void sort(int *arr, int n){     // function for sorting arrays
 }
 
 
-int read_ultrasonic(bool verbose=false){        // measure distance with ultrasonic sensor
+int read_ultrasonic(bool verbose=false){
     int length = 15;                            // number of measurements
     int measurements[length];
     float f_dist;
@@ -194,7 +197,7 @@ void calibrate_line_sensors(){
 }
 
 
-unsigned int *read_infrared_line(bool verbose=false){       // read and print line sensor values
+unsigned int *read_infrared_line(bool verbose=false){
     line_sensors.readLine(line_sensor_values);              // read sensor values
 
     if(verbose){    // print result
@@ -209,7 +212,7 @@ unsigned int *read_infrared_line(bool verbose=false){       // read and print li
 }
 
 
-void line_follower(unsigned int *s, const float Kp, const float Ki, const float Kd, const int max_speed){     // line follower using PID controller
+void line_follower(unsigned int *s, const float Kp, const float Ki, const float Kd, const int max_speed){
     unsigned int line_pos = line_sensors.readLine(line_sensor_values);    // read sensor values
 
     float time = millis();
@@ -288,8 +291,8 @@ void backward(int speed){
 }
 
 
-void left(){
-    set_motor_speed(80);        // set motor speed to 80
+void left(int speed){
+    set_motor_speed(speed);     // set motor speed
     digitalWrite(AIN1, HIGH);   // set motor-L backward pin to high
     digitalWrite(AIN2, LOW);    // set motor-L forward pin to low
     digitalWrite(BIN1, LOW);    // set motor-R backward pin to low
@@ -297,8 +300,8 @@ void left(){
 }
 
 
-void right(){
-    set_motor_speed(80);        // set motor speed to 80
+void right(int speed){
+    set_motor_speed(speed);     // set motor speed
     digitalWrite(AIN1, LOW);    // set motor-L backward pin to low
     digitalWrite(AIN2, HIGH);   // set motor-L forward pin to high
     digitalWrite(BIN1, HIGH);   // set motor-R backward pin to high
@@ -312,4 +315,15 @@ void stay(){
     digitalWrite(AIN2, LOW);    // set motor-L forward pin to low
     digitalWrite(BIN1, LOW);    // set motor-R backward pin to low
     digitalWrite(BIN2, LOW);    // set motor-R forward pin to low
+}
+
+void lights(int led_1[3], int led_2[3], int led_3[3], int led_4[3]){
+    RGB.begin();
+
+    RGB.setPixelColor(0, RGB.Color(led_1[0], led_1[1], led_1[2]));
+    RGB.setPixelColor(1, RGB.Color(led_2[0], led_2[1], led_2[2]));
+    RGB.setPixelColor(2, RGB.Color(led_3[0], led_3[1], led_3[2]));
+    RGB.setPixelColor(3, RGB.Color(led_4[0], led_4[1], led_4[2]));
+
+    RGB.show();
 }
