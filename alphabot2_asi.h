@@ -7,7 +7,7 @@
 
 void initialize_alphabot();
 
-void lights(int led_1[3], int led_2[3], int led_3[3], int led_4[3]);    // setup custom-colour RGB OLEDs
+void lights(int led_1[3], int led_2[3], int led_3[3], int led_4[3]);    // setup custom-colour RGB LEDs
 
 int read_ultrasonic(bool verbose);                  // read ultrasonic sensor output
 char read_infrared(bool verbose);                   // read front infrared sensors output
@@ -26,6 +26,5 @@ void stay();                                        // stop movement
 
 void set_left_motor_speed(int speed_val);           // set left motor speed
 void set_right_motor_speed(int speed_val);          // set right motor speed
-
 
 #endif

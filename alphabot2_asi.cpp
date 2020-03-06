@@ -16,9 +16,9 @@
 #define BIN1   A2       // motor-R forward (IN3)
 #define BIN2   A3       // motor-R backward (IN4)
 #define PCFADR  0x20    // PCF8574 I/O expansion module address (for forward facing infrared sensors)
-#define LED_PIN 7       // OLEDs pin
+#define LED_PIN 7       // LEDs pin
 
-Adafruit_NeoPixel RGB = Adafruit_NeoPixel(4, LED_PIN, NEO_GRB + NEO_KHZ800);    // setup RGB OLEDs
+Adafruit_NeoPixel RGB = Adafruit_NeoPixel(4, LED_PIN, NEO_GRB + NEO_KHZ800);    // setup RGB LEDs
 
 TRSensors line_sensors = TRSensors();       // declare line sensors as TRSensor type object
 unsigned int line_sensor_values[5];         // declare global array for line sensor values
@@ -71,16 +71,16 @@ char read_infrared(bool verbose=false){
 
     if(verbose){    // print result
         if(value == 0x7F)
-            Serial.println("Left sensor detection.");
+            Serial.println("Left sensor has detected an obstacle.");
 
         else if(value == 0xBF)
-            Serial.println("Right sensor detection.");
+            Serial.println("Right sensor has detected an obstacle.");
 
         else if(value == 0x3F)
-            Serial.println("Both sensors detection.");
+            Serial.println("Both sensors have detected an obstacle.");
 
         else if(value == 0xFF)
-            Serial.println("No detection.");
+            Serial.println("No obstacle has been detected.");
     }
 
     if(value == 0x7F)       // check if left sensor is active
@@ -154,7 +154,7 @@ int read_ultrasonic(bool verbose=false){
             Serial.println("ERROR! OUT OF RANGE! ==》Ultrasonic range: 3cm - 400cm");
         }
         else{
-            Serial.println("Distance = ");      // print distance
+            Serial.println("Distance = ");
             Serial.print(distance);
             Serial.println("cm");
         }
@@ -164,6 +164,7 @@ int read_ultrasonic(bool verbose=false){
 }
 
 
+// This function is strictly for calibrating the line sensors and must NOT to be used!
 void calibrate_line_sensors(){
 
     for (int i = 0; i < 100; i++)  // make the calibration take about 10 seconds
@@ -201,17 +202,19 @@ unsigned int *read_infrared_line(bool verbose=false){
     line_sensors.readLine(line_sensor_values);              // read sensor values
 
     if(verbose){    // print result
+        Serial.print("Line sensor values: ");
         for (unsigned char i = 0; i < 5; i++)
         {
             Serial.print(line_sensor_values[i]);
             Serial.print('\t');
         }
+        Serial.println();
     }
-
     return line_sensor_values;
 }
 
 
+// This function is not finished and should NOT be used!
 void line_follower(unsigned int *s, const float Kp, const float Ki, const float Kd, const int max_speed){
     unsigned int line_pos = line_sensors.readLine(line_sensor_values);    // read sensor values
 
@@ -317,13 +320,14 @@ void stay(){
     digitalWrite(BIN2, LOW);    // set motor-R forward pin to low
 }
 
+
 void lights(int led_1[3], int led_2[3], int led_3[3], int led_4[3]){
     RGB.begin();
 
-    RGB.setPixelColor(0, RGB.Color(led_1[0], led_1[1], led_1[2]));
-    RGB.setPixelColor(1, RGB.Color(led_2[0], led_2[1], led_2[2]));
-    RGB.setPixelColor(2, RGB.Color(led_3[0], led_3[1], led_3[2]));
-    RGB.setPixelColor(3, RGB.Color(led_4[0], led_4[1], led_4[2]));
+    RGB.setPixelColor(0, RGB.Color(led_1[0], led_1[1], led_1[2]));      // set colour of first LED
+    RGB.setPixelColor(1, RGB.Color(led_2[0], led_2[1], led_2[2]));      // set colour of second LED
+    RGB.setPixelColor(2, RGB.Color(led_3[0], led_3[1], led_3[2]));      // set colour of third LED
+    RGB.setPixelColor(3, RGB.Color(led_4[0], led_4[1], led_4[2]));      // set colour of fourth LED
 
-    RGB.show();
+    RGB.show();     // turn on LEDs
 }
