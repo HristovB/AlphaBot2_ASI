@@ -267,16 +267,25 @@ void set_motor_speed(int speed_val){
 
 
 void set_left_motor_speed(int speed_val){
+    if(speed_val > 180)             // max allowed speed of 180 for robot safety
+        speed_val = 180;
+
     analogWrite(PWMA, speed_val);   // set speed for left motor
 }
 
 
 void set_right_motor_speed(int speed_val){
+    if(speed_val > 180)             // max allowed speed of 180 for robot safety
+        speed_val = 180;
+
     analogWrite(PWMB, speed_val);   // set speed for right motor
 }
 
 
 void forward(int speed){
+    if(speed > 180)             // max allowed speed of 180 for robot safety
+        speed = 180;
+
     set_motor_speed(speed);     // set motor speed
     digitalWrite(AIN1, LOW);    // set motor-L backward pin to low
     digitalWrite(AIN2, HIGH);   // set motor-L forward pin to high
@@ -286,6 +295,9 @@ void forward(int speed){
 
 
 void backward(int speed){
+    if(speed > 180)             // max allowed speed of 180 for robot safety
+        speed = 180;
+
     set_motor_speed(speed);     // set motor speed
     digitalWrite(AIN1, HIGH);   // set motor-L backward pin to high
     digitalWrite(AIN2, LOW);    // set motor-L forward pin to low
@@ -295,6 +307,9 @@ void backward(int speed){
 
 
 void left(int speed){
+    if(speed > 180)             // max allowed speed of 180 for robot safety
+        speed = 180;
+
     set_motor_speed(speed);     // set motor speed
     digitalWrite(AIN1, HIGH);   // set motor-L backward pin to high
     digitalWrite(AIN2, LOW);    // set motor-L forward pin to low
@@ -304,6 +319,9 @@ void left(int speed){
 
 
 void right(int speed){
+    if(speed > 180)             // max allowed speed of 180 for robot safety
+        speed = 180;
+
     set_motor_speed(speed);     // set motor speed
     digitalWrite(AIN1, LOW);    // set motor-L backward pin to low
     digitalWrite(AIN2, HIGH);   // set motor-L forward pin to high
