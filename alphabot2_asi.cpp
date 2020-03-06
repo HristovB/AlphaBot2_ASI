@@ -2,7 +2,7 @@
 // Created by Blagoj Hristov on 26/02/20.
 //
 
-#include "alphabot2_asi.h"
+#include <alphabot2_asi.h>
 #include <Arduino.h>
 #include <Wire.h>
 #include <TRSensors.h>
@@ -246,7 +246,7 @@ void line_follower(unsigned int *s, const float Kp, const float Ki, const float 
         analogWrite(PWMB, max_speed - control_signal);
     }
 
-    if (s[0] > 750 && s[1] > 750 && s[2] > 750 && s[3] > 750 && s[4] > 750)     // check if line is still detectable
+    if (s[1] > 750 && s[2] > 750 && s[3] > 750)     // check if line is still detectable
     {
         stay();
         Serial.println("Line not detected!");
@@ -256,6 +256,16 @@ void line_follower(unsigned int *s, const float Kp, const float Ki, const float 
 
 void set_motor_speed(int speed_val){
     analogWrite(PWMA, speed_val);   // set speed for left motor
+    analogWrite(PWMB, speed_val);   // set speed for right motor
+}
+
+
+void set_left_motor_speed(int speed_val){
+    analogWrite(PWMA, speed_val);   // set speed for left motor
+}
+
+
+void set_right_motor_speed(int speed_val){
     analogWrite(PWMB, speed_val);   // set speed for right motor
 }
 
