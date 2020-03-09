@@ -7,6 +7,8 @@
 #include <Wire.h>
 #include <TRSensors.h>
 #include <Adafruit_NeoPixel.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
 #define ECHO   2        // ultrasonic echo
 #define TRIG   3        // ultrasonic trigger
@@ -18,7 +20,10 @@
 #define BIN2   A3       // motor-R backward (IN4)
 #define PCFADR  0x20    // PCF8574 I/O expansion module address (for forward facing infrared sensors)
 #define LED_PIN 7       // LEDs pin
+#define OLED_RESET 9    // OLED display reset pin
+#define OLED_SA0   8    // OLED display set pin
 
+Adafruit_SSD1306 display(OLED_RESET, OLED_SA0);
 Adafruit_NeoPixel RGB = Adafruit_NeoPixel(4, LED_PIN, NEO_GRB + NEO_KHZ800);    // setup RGB LEDs
 
 TRSensors line_sensors = TRSensors();       // declare line sensors as TRSensor type object
@@ -29,7 +34,7 @@ float time_prev = 0;                        // declare initial value of previous
 int line_pos_prev = 0;                      // declare initial value for previous line position for PID
 
 
-void initialize_alphabot(){
+void initialize(){
     Serial.begin(115200);
     Wire.begin();
     pinMode(ECHO, INPUT);    // define the ultrasonic echo input pin
@@ -45,6 +50,21 @@ void initialize_alphabot(){
         line_sensors.calibratedMax[i] = 450;    // set calibrated maximum value for line sensors
         line_sensors.calibratedMin[i] = 65;     // set calibrated minimum value for line sensors
     }
+
+    display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize OLED display
+    oled_display();                             // write on OLED display
+}
+
+
+void oled_display(){
+    display.clearDisplay();
+    display.setTextSize(2);
+    display.setTextColor(WHITE);
+    display.setCursor(15,20);
+    display.println("RoboMac Junior 2020");
+    display.display();
+    delay(5000);
+    display.clearDisplay();
 }
 
 
@@ -199,8 +219,8 @@ void calibrate_line_sensors(){
 }
 
 
-unsigned int *read_infrared_line(bool verbose=false){
-    line_sensors.readLine(line_sensor_values);              // read sensor values
+int *read_infrared_line(bool verbose=false){
+    line_sensors.readLine(line_sensor_values);      // read sensor values
 
     if(verbose){    // print result
         Serial.print("Line sensor values: ");
@@ -215,7 +235,7 @@ unsigned int *read_infrared_line(bool verbose=false){
 }
 
 
-// This function is not finished and should NOT be used!
+// This function is for PID controlled line following, is not finished, and should NOT be used!
 void line_follower(unsigned int *s, const float Kp, const float Ki, const float Kd, const int max_speed){
     unsigned int line_pos = line_sensors.readLine(line_sensor_values);    // read sensor values
 
