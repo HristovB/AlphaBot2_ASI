@@ -281,25 +281,25 @@ void line_follower(unsigned int *s, const float Kp, const float Ki, const float 
 }
 
 
-void set_motor_speed(int speed_val){
-    analogWrite(PWMA, speed_val);   // set speed for left motor
-    analogWrite(PWMB, speed_val);   // set speed for right motor
+void set_motor_speed(int speed){
+    analogWrite(PWMA, speed);   // set speed for left motor
+    analogWrite(PWMB, speed);   // set speed for right motor
 }
 
 
-void set_left_motor_speed(int speed_val){
-    if(speed_val > 180)             // max allowed speed of 180 for robot safety
-        speed_val = 180;
+void set_left_motor_speed(int speed){
+    if(speed > 180)             // max allowed speed of 180 for robot safety
+        speed = 180;
 
-    analogWrite(PWMA, speed_val);   // set speed for left motor
+    analogWrite(PWMA, speed);   // set speed for left motor
 }
 
 
-void set_right_motor_speed(int speed_val){
-    if(speed_val > 180)             // max allowed speed of 180 for robot safety
-        speed_val = 180;
+void set_right_motor_speed(int speed){
+    if(speed > 180)             // max allowed speed of 180 for robot safety
+        speed = 180;
 
-    analogWrite(PWMB, speed_val);   // set speed for right motor
+    analogWrite(PWMB, speed);   // set speed for right motor
 }
 
 
