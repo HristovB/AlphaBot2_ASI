@@ -6,6 +6,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <TRSensors.h>
+#include <Adafruit_NeoPixel.h>
 
 #define ECHO   2        // ultrasonic echo
 #define TRIG   3        // ultrasonic trigger
@@ -171,12 +172,12 @@ void calibrate_line_sensors(){
     {
         if(i < 25 || i >= 75)
         {
-            left();             // for first 2.5s and last 2.5s turn left
+            left(60);             // for first 2.5s and last 2.5s turn left
         }
 
         else
         {
-            right();            // for middle 5s turn right
+            right(60);            // for middle 5s turn right
         }
 
         line_sensors.calibrate();        // reads all sensors 100 times
