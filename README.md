@@ -5,7 +5,7 @@ AlphaBot2 library for Arduino Uno microcontroller for Robomac Junior 2020.
 
 ### void initialize()
 
-This function should always be called in the ***void setup()*** function of the Arduino IDE, as it initializes basic pins for the sensors and motors, OLED display, RGB diodes as well as the Serial Monitor.
+This function should always be called in the ***void setup()*** function of the Arduino IDE, as it initializes basic pins for the sensors and motors, the OLED display, RGB diodes as well as the Serial Monitor.
 
 **Input:** *None*
 **Output:** *None*
