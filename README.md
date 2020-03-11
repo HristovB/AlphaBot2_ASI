@@ -1,5 +1,5 @@
 # AlphaBot2-Ar Function Library
-AlphaBot2 library for Arduino Uno microcontroller for Robomac Junior 2020.
+AlphaBot2 library for Arduino Uno microcontroller for RoboMac Junior 2020.
 
 ## Library Documentation
 
