@@ -31,7 +31,7 @@ This function is for reading the front-facing infrared sensors for obstacle dete
 **Input:** *Boolean value for printing results (true/false)*
 **Output:** *Character representing which sensor/s is/are active ('L' - left, 'R' - right, 'B' - both, 'N' - none)*
 
-### int \*read_infrared_line(bool verbose=false)
+### unsigned int \*read_infrared_line(bool verbose=false)
 
 This function is for reading the values of the bottom infrared sensors intended for line following. If calibrated properly, the individual sensor output should be equal to **0** when there is no line detected, and close to **1000** when the line is directly under the sensor.
 
