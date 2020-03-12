@@ -34,6 +34,18 @@ float time_prev = 0;                        // declare initial value of previous
 int line_pos_prev = 0;                      // declare initial value for previous line position for PID
 
 
+void oled_display(){
+    display.clearDisplay();
+    display.setTextSize(2);
+    display.setTextColor(WHITE);
+    display.setCursor(15,20);
+    display.println("RoboMac Junior 2020");
+    display.display();
+    delay(5000);
+    display.clearDisplay();
+}
+
+
 void initialize(){
     Serial.begin(115200);
     Wire.begin();
@@ -53,18 +65,6 @@ void initialize(){
 
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize OLED display
     oled_display();                             // write on OLED display
-}
-
-
-void oled_display(){
-    display.clearDisplay();
-    display.setTextSize(2);
-    display.setTextColor(WHITE);
-    display.setCursor(15,20);
-    display.println("RoboMac Junior 2020");
-    display.display();
-    delay(5000);
-    display.clearDisplay();
 }
 
 
@@ -219,7 +219,7 @@ void calibrate_line_sensors(){
 }
 
 
-int *read_infrared_line(bool verbose=false){
+unsigned int *read_infrared_line(bool verbose=false){
     line_sensors.readLine(line_sensor_values);      // read sensor values
 
     if(verbose){    // print result
