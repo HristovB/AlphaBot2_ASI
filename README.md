@@ -2,7 +2,7 @@
 
 AlphaBot2 library for Arduino Uno microcontroller for RoboMac Junior 2020.
 
-RoboMac Junior is a robotics competition held at the Faculty of Electrical Engineering and Information Technologies (FEEIT) in Skopje, North Macedonia. The goal of the Junior section of the competition is to allow for high school students in their final year of studies to gain experience and insight into new fields such as robotics, electronics, programming, artificial intelligence and increase their interest for these rapidly developing technologies.
+RoboMac is a robotics and artificial intelligence competition held at the Faculty of Electrical Engineering and Information Technologies (FEEIT) in Skopje, North Macedonia. The goal of the Junior section of the competition is to allow for high school students in their final year of studies to gain experience and insight into new fields such as robotics, electronics, programming, artificial intelligence and increase their interest for these rapidly developing technologies.
 
 The purpose of the library is to allow for easy and natural programming of the AlphaBot2, without a need for extensive previous experience in C++ programming or Arduino.
 
