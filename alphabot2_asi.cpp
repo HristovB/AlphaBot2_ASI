@@ -4,9 +4,10 @@
 
 #include <alphabot2_asi.h>
 #include <Arduino.h>
+#include <SPI.h>
 #include <Wire.h>
 #include <TRSensors.h>
-#include <Adafruit_NeoPixel.h>
+//#include <Adafruit_NeoPixel.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
@@ -24,7 +25,7 @@
 #define OLED_SA0   8    // OLED display set pin
 
 Adafruit_SSD1306 display(OLED_RESET, OLED_SA0);
-Adafruit_NeoPixel RGB = Adafruit_NeoPixel(4, LED_PIN, NEO_GRB + NEO_KHZ800);    // setup RGB LEDs
+//Adafruit_NeoPixel RGB = Adafruit_NeoPixel(4, LED_PIN, NEO_GRB + NEO_KHZ800);    // setup RGB LEDs
 
 TRSensors line_sensors = TRSensors();       // declare line sensors as TRSensor type object
 unsigned int line_sensor_values[5];         // declare global array for line sensor values
@@ -33,18 +34,9 @@ float I = 0;                                // declare initial value for integra
 float time_prev = 0;                        // declare initial value of previous time measurement for PID
 int line_pos_prev = 0;                      // declare initial value for previous line position for PID
 
-
-void oled_display(){
-    display.clearDisplay();
-    display.setTextSize(2);
-    display.setTextColor(WHITE);
-    display.setCursor(15,20);
-    display.println("RoboMac Junior 2020");
-    display.display();
-    delay(5000);
-    display.clearDisplay();
-}
-
+long int time_start;   // declare start time variable
+long int time_end;     // declare end time variable
+long int time_elapsed; // declare elapsed time variable
 
 void initialize(){
     Serial.begin(115200);
@@ -55,8 +47,8 @@ void initialize(){
     pinMode(AIN2, OUTPUT);   // define the left motor forward pin
     pinMode(AIN1, OUTPUT);   // define the left motor backward pin
     pinMode(PWMB, OUTPUT);   // define the right motor speed pin
-    pinMode(AIN1, OUTPUT);   // define the right motor forward pin
-    pinMode(AIN2, OUTPUT);   // define the right motor backward pin
+    pinMode(BIN2, OUTPUT);   // define the right motor forward pin
+    pinMode(BIN1, OUTPUT);   // define the right motor backward pin
 
     for(int i = 0; i < 5; i++) {
         line_sensors.calibratedMax[i] = 450;    // set calibrated maximum value for line sensors
@@ -64,9 +56,61 @@ void initialize(){
     }
 
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize OLED display
-    oled_display();                             // write on OLED display
+    //oled_display_name();                      // write competition name on OLED display (scrolling)
+
+    time_start = millis();                      // read initial start time in milliseconds 
 }
 
+#define LOGO16_GLCD_HEIGHT 16 
+#define LOGO16_GLCD_WIDTH  16 
+static const unsigned char PROGMEM logo16_glcd_bmp[] =
+{ 
+//  B00000000, B11000000,
+//  B00000001, B11000000,
+//  B00000001, B11000000,
+//  B00000011, B11100000,
+//  B11110011, B11100000,
+//  B11111110, B11111000,
+//  B01111110, B11111111,
+//  B00110011, B10011111,
+//  B00011111, B11111100,
+//  B00001101, B01110000,
+//  B00011011, B10100000,
+//  B00111111, B11100000,
+//  B00111111, B11110000,
+//  B01111100, B11110000,
+//  B01110000, B01110000,
+//  B00000000, B00110000 
+0x00,0x00,0x00,0x20,0x00,0x60,0x00,0xE0,0x00,0xE0,0xEE,0xCC,0x7E,0xCE,0x7F,0xDE,
+0x7F,0xFF,0x3F,0xFB,0x3B,0x33,0x11,0x27,0x00,0x0E,0x00,0x0E,0x00,0x0C,0x00,0x00
+};
+
+void oled_display_name(){
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0,2);
+  display.clearDisplay();
+  display.println("RoboMac");
+  display.setCursor(6,20);
+  display.println("Junior");
+  display.setCursor(17,40);
+  display.println("2022");
+  display.display();
+ 
+  display.startscrollright(0x00, 0x0F);
+}
+
+void oled_display_time(long int ts){
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0,2);
+  display.clearDisplay();
+  display.println("Elapsed time:");
+  display.setCursor(6,20);
+  display.print(ts/1000);
+  display.print(" s");
+  display.display();
+}
 
 void write_PCF8574(byte data){      // write to the PCF8574 I/O expansion module
     Wire.beginTransmission(PCFADR);
@@ -352,15 +396,19 @@ void right(int speed){
 
 
 void stay(){
-    set_motor_speed(0);         // set motor speed to 0
-    digitalWrite(AIN1, LOW);    // set motor-L backward pin to low
-    digitalWrite(AIN2, LOW);    // set motor-L forward pin to low
-    digitalWrite(BIN1, LOW);    // set motor-R backward pin to low
-    digitalWrite(BIN2, LOW);    // set motor-R forward pin to low
+    set_motor_speed(0);                     // set motor speed to 0
+    digitalWrite(AIN1, LOW);                // set motor-L backward pin to low
+    digitalWrite(AIN2, LOW);                // set motor-L forward pin to low
+    digitalWrite(BIN1, LOW);                // set motor-R backward pin to low
+    digitalWrite(BIN2, LOW);                // set motor-R forward pin to low
+    time_end = millis();                    // read final end time in milliseconds
+    time_elapsed = time_end - time_start;   // calculate elapsed time in milliseconds
+
+    oled_display_time(time_elapsed);        // display elapsed time on OLED display
 }
 
 
-void lights(int led_1[3], int led_2[3], int led_3[3], int led_4[3]){
+/*void lights(int led_1[3], int led_2[3], int led_3[3], int led_4[3]){
     RGB.begin();
 
     RGB.setPixelColor(0, RGB.Color(led_1[0], led_1[1], led_1[2]));      // set colour of first LED
@@ -369,4 +417,4 @@ void lights(int led_1[3], int led_2[3], int led_3[3], int led_4[3]){
     RGB.setPixelColor(3, RGB.Color(led_4[0], led_4[1], led_4[2]));      // set colour of fourth LED
 
     RGB.show();     // turn on LEDs
-}
+}*/
