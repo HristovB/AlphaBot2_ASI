@@ -49,10 +49,58 @@ void initialize(){
     pinMode(PWMB, OUTPUT);   // define the right motor speed pin
     pinMode(BIN2, OUTPUT);   // define the right motor forward pin
     pinMode(BIN1, OUTPUT);   // define the right motor backward pin
+    
+    //// Bot 1:
+    //int calibrated_max_vals[5] = {937, 934, 891, 762, 955};
+    //int calibrated_min_vals[5] = {187, 205, 156, 138, 292};
+
+    // Bot 2:
+    //int calibrated_max_vals[5] = {723, 758, 941, 945, 843};
+    //int calibrated_min_vals[5] = {150, 164, 171, 135, 133};
+
+    // Bot 3:
+    //int calibrated_max_vals[5] = {704, 686, 626, 958, 797};
+    //int calibrated_min_vals[5] = {134, 109, 116, 260, 149};
+
+    // Bot 4:
+    //int calibrated_max_vals[5] = {594, 678, 632, 552, 758};
+    //int calibrated_min_vals[5] = {150, 164, 171, 135, 133};
+
+    // Bot 5:
+    //int calibrated_max_vals[5] = {753, 706, 764, 940, 708};
+    //int calibrated_min_vals[5] = {117, 123, 126, 227, 127};
+
+    // Bot 6:
+    //int calibrated_max_vals[5] = {776, 586, 706, 552, 745};
+    //int calibrated_min_vals[5] = {228, 158, 184, 134, 222};
+
+    // Bot 7:
+    //int calibrated_max_vals[5] = {853, 932, 589, 913, 881};
+    //int calibrated_min_vals[5] = {143, 225, 160, 152, 139};
+
+    // Bot 8:
+    //int calibrated_max_vals[5] = {813, 787, 690, 573, 689};
+    //int calibrated_min_vals[5] = {199, 218, 165, 161, 186};
+
+    // Bot 9:
+    //int calibrated_max_vals[5] = {953, 817, 880, 770, 803};
+    //int calibrated_min_vals[5] = {288, 208, 239, 212, 222};
+
+    // Bot 10 (X):
+    //int calibrated_max_vals[5] = {941, 918, 751, 953, 698};
+    //int calibrated_min_vals[5] = {270, 237, 232, 363, 180};
+
+    // Bot 11:
+    int calibrated_max_vals[5] = {864, 629, 724, 746, 952};
+    int calibrated_min_vals[5] = {204, 160, 181, 158, 278};
+
+    // Bot 12:
+    //int calibrated_max_vals[5] = {, , , ,};
+    //int calibrated_min_vals[5] = {, , , ,};
 
     for(int i = 0; i < 5; i++) {
-        line_sensors.calibratedMax[i] = 450;    // set calibrated maximum value for line sensors
-        line_sensors.calibratedMin[i] = 65;     // set calibrated minimum value for line sensors
+     	line_sensors.calibratedMax[i] = calibrated_max_vals[i];
+	line_sensors.calibratedMin[i] = calibrated_min_vals[i];
     }
 
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize OLED display
@@ -76,12 +124,21 @@ void oled_display_name(){
   display.startscrollright(0x00, 0x0F);
 }
 
+void oled_display_markers(int mrk){
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0,2);
+  display.clearDisplay();
+  display.println(mrk);
+  display.display();
+}
+
 void oled_display_time(long int ts){
   display.setTextSize(2);
   display.setTextColor(WHITE);
   display.setCursor(0,2);
   display.clearDisplay();
-  display.println("Elapsed time:");
+  display.println("Time:");
   display.setCursor(6,20);
   display.print(ts/1000);
   display.print(" s");
@@ -205,37 +262,33 @@ int read_ultrasonic(bool verbose=false){
 }
 
 
-// This function is strictly for calibrating the line sensors and must NOT to be used!
+// This function is strictly for calibrating the line sensors and should NOT to be used!
 void calibrate_line_sensors(){
 
     for (int i = 0; i < 100; i++)  // make the calibration take about 10 seconds
     {
-        if(i < 25 || i >= 75)
-        {
-            left(60);             // for first 2.5s and last 2.5s turn left
-        }
-
-        else
-        {
-            right(60);            // for middle 5s turn right
-        }
-
         line_sensors.calibrate();        // reads all sensors 100 times
+    	line_sensors.readCalibrated(line_sensor_values);
+	for(int i = 0; i < 5; i++){
+        	Serial.print(line_sensor_values[i]);
+        	Serial.print(" ");
+    	}
+	Serial.println();
+	delay(100);
     }
-
-    for(int i = 0; i < 5; i++){
-        Serial.print("Max values: ");
+    Serial.print("Calibrated max values: ");
+    for(int i = 0; i < 5; i++){ 
         Serial.print(line_sensors.calibratedMax[i]);
         Serial.print(" ");
     }
 
     Serial.println();
-
-    for(int i = 0; i < 5; i++){
-        Serial.print("Min values: ");
+    Serial.print("Calibrated min values: ");
+    for(int i = 0; i < 5; i++){    
         Serial.print(line_sensors.calibratedMin[i]);
         Serial.print(" ");
     }
+    Serial.println(); 
 }
 
 
@@ -381,6 +434,7 @@ void stay(){
     time_elapsed = time_end - time_start;   // calculate elapsed time in milliseconds
 
     oled_display_time(time_elapsed);        // display elapsed time on OLED display
+    delay(100000);
 }
 
 
