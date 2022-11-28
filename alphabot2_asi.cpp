@@ -50,9 +50,11 @@ void initialize(){
     pinMode(BIN2, OUTPUT);   // define the right motor forward pin
     pinMode(BIN1, OUTPUT);   // define the right motor backward pin
     
-    //// Bot 1:
-    //int calibrated_max_vals[5] = {937, 934, 891, 762, 955};
-    //int calibrated_min_vals[5] = {187, 205, 156, 138, 292};
+    // Uncomment the calibrated_max_vals and calibrated_min_vals for YOUR robot only!
+	
+    // Bot 1:
+    int calibrated_max_vals[5] = {937, 934, 891, 762, 955};
+    int calibrated_min_vals[5] = {187, 205, 156, 138, 292};
 
     // Bot 2:
     //int calibrated_max_vals[5] = {723, 758, 941, 945, 843};
@@ -91,12 +93,12 @@ void initialize(){
     //int calibrated_min_vals[5] = {270, 237, 232, 363, 180};
 
     // Bot 11:
-    int calibrated_max_vals[5] = {864, 629, 724, 746, 952};
-    int calibrated_min_vals[5] = {204, 160, 181, 158, 278};
+    //int calibrated_max_vals[5] = {864, 629, 724, 746, 952};
+    //int calibrated_min_vals[5] = {204, 160, 181, 158, 278};
 
     // Bot 12:
-    //int calibrated_max_vals[5] = {, , , ,};
-    //int calibrated_min_vals[5] = {, , , ,};
+    //int calibrated_max_vals[5] = {681, 940, 817, 959, 596};
+    //int calibrated_min_vals[5] = {177, 264, 236, 269, 170};
 
     for(int i = 0; i < 5; i++) {
      	line_sensors.calibratedMax[i] = calibrated_max_vals[i];
@@ -104,7 +106,7 @@ void initialize(){
     }
 
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize OLED display
-    //oled_display_name();                      // write competition name on OLED display (scrolling)
+    oled_display_name();                      // write competition name on OLED display (scrolling)
 
     time_start = millis();                      // read initial start time in milliseconds 
 }
